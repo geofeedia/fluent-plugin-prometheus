@@ -62,7 +62,7 @@ end
 def key_symbol(key, record)
   key_base = key.gsub(/<(\w+)>$/, '').gsub(/\./, '_') # remove the type identifier suffix and replace periods
 
-  if record.has_key? 'schema' && record['schema'] == 'woodpecker.v1'
+  if record.has_key?('schema') && record['schema'] == 'woodpecker.v1'
     # combine module_submodule_action_key
     return ([ record['module'], record['submodule'], record['action'], key_base ] * '_').to_sym
   end
