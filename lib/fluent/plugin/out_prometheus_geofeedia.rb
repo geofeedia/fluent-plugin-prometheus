@@ -6,9 +6,6 @@ module Fluent
     Plugin.register_output('prometheus_geofeedia', self)
     include Fluent::Prometheus
 
-    # in milliseconds
-    DEFAULT_BUCKETS = [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000].freeze
-
     def initialize
       super
       @registry = ::Prometheus::Client.registry
@@ -26,22 +23,20 @@ module Fluent
           record.each do |key, value|
 
             # Look for specific keys that we know how to map to metrics
-            if /(count|error|success)<(int|long)>$/.match key
+            if /(count|error|size|success)<(int|long)>$/.match key
               key_sym = key_symbol(key, record)
               counter = @registry.exist?(key_sym) ? @registry.get(key_sym) : @registry.counter(key_sym, 'counter')
-              counter.increment(labels, value)
-
-            elsif /(duration|size|took)<(int|long)>$/.match key
+              counter.increment(labels, value.to_i)
+            elsif /(duration|took)<(int|long)>$/.match key
               key_sym = key_symbol(key, record)
-              histogram = @registry.exist?(key_sym) ? @registry.get(key_sym) : @registry.histogram(key_sym, 'histogram', {}, DEFAULT_BUCKETS)
-              histogram.observe(labels, value)
-              
+              summary = @registry.exist?(key_sym) ? @registry.get(key_sym) : @registry.summary(key_sym, 'summary')
+              summary.observe(labels, value.to_i)
             end
 
           end
 
         rescue => e
-          $log.error("Prometheus Geofeedia error:", :error_class => e.class, :error => e.message)
+          $log.error("Prometheus Geofeedia error:", :error_class => e.class, :error => e.message, :record => record)
           # $log.error(e.backtrace)
         end
       end
