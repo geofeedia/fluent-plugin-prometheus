@@ -49,13 +49,11 @@ end
 def standard_labels(record)
   labels = {}
 
-  labels[:service] = record['service'] if record.has_key? 'service'
-  labels[:release] = record['release'] if record.has_key? 'release'
+  attrs = %w(service release placement.cloud placement.env placement.hostname 
+    placement.instanceid placement.podname placement.region placement.zone)
 
-  record.each do |key, value|
-    if key.start_with? 'placement.'
-      labels[key.gsub(/\./, '_').to_sym] = value
-    end
+  attrs.each do |key|
+    labels[key.to_sym] = record.has_key?(key) ? record[key] : nil
   end
 
   return labels
