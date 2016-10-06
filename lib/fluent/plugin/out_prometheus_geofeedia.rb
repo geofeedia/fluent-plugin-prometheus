@@ -53,7 +53,7 @@ def standard_labels(record)
     placement.instanceid placement.podname placement.region placement.zone)
 
   attrs.each do |key|
-    labels[key.to_sym] = record.has_key?(key) ? record[key] : nil
+    labels[key.gsub(/\./, '_').to_sym] = record.has_key?(key) ? record[key] : nil
   end
 
   return labels
