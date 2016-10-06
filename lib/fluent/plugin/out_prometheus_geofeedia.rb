@@ -60,12 +60,12 @@ def standard_labels(record)
 end
 
 def key_symbol(key, record)
-  key_base = key.gsub(/<(\w+)>$/, '').gsub(/\./, '_') # remove the type identifier suffix and replace periods
+  key_base = key.gsub(/<(\w+)>$/, '') # remove the type identifier suffix
 
   if record.has_key?('schema') && record['schema'] == 'woodpecker.v1'
     # combine module_submodule_action_key
-    return ([ record['module'], record['submodule'], record['action'], key_base ] * '_').to_sym
+    return ([ record['module'], record['submodule'], record['action'], key_base ] * '_').gsub(/\./, '_').to_sym
   end
 
-  return key_base.to_sym
+  return key_base.gsub(/\./, '_').to_sym
 end
