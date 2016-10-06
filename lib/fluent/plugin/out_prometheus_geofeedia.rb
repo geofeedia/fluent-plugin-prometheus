@@ -64,8 +64,8 @@ def key_symbol(key, record)
 
   if record.has_key?('schema') && record['schema'] == 'woodpecker.v1'
     # combine module_submodule_action_key
-    return ([ record['module'], record['submodule'], record['action'], key_base ] * '_').gsub(/\./, '_').to_sym
+    return ([ record['module'], record['submodule'], record['action'], key_base ] * '_').gsub(/[^a-zA-Z0-9_]/, '_').to_sym
   end
 
-  return key_base.gsub(/\./, '_').to_sym
+  return key_base.gsub(/[^a-zA-Z0-9_]/, '_').to_sym
 end
