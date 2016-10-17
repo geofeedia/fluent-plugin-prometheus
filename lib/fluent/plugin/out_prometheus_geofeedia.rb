@@ -27,7 +27,7 @@ module Fluent
               key_sym = key_symbol(key, record)
               counter = @registry.exist?(key_sym) ? @registry.get(key_sym) : @registry.counter(key_sym, 'counter')
               counter.increment(labels, value.to_i)
-            elsif /(duration|took)<(int|long)>$/.match key
+            elsif /(duration|took|burnlatency)<(int|long)>$/.match key
               key_sym = key_symbol(key, record)
               summary = @registry.exist?(key_sym) ? @registry.get(key_sym) : @registry.summary(key_sym, 'summary')
               summary.observe(labels, value.to_i)
